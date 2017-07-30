@@ -22,7 +22,7 @@
 
 (defn initialize-node
  ;; ([node-index] (swap! data assoc (keywordize node-index) (list)))
-  ([container node-index] (assoc container (keywordize node-index) (list))))
+  ([container node-index] (assoc container (keywordize node-index) #{})))
 
 (defn initialize-nodes
 ;;  ([number-of-nodes] (doall (map initialize-node (range 1 (inc number-of-nodes)))))
@@ -49,29 +49,62 @@
   ; setup function returns initial state.
   (let [number-of-nodes 3]
   ;;  (initialize-nodes number-of-nodes)
-    {:color           0
-     :angle           0
-     :word            ""
-     :number-of-nodes 3
-     :data            (initialize-nodes {} number-of-nodes)}))
+    {:number-of-nodes 3
+     :mode :put
+     :data            {}
+     :put-animation-map {}
+     :get-animation-map {}}))
 
 
-(defn update-one-step [step]
+(defn increase-one-step [step]
   (if (< step radius)
     (inc step)
     step))
 
-(defn update-step [node-list]
-  (map #(update % :step update-one-step) node-list))
+(defn decrease-one-step [step]
+  (if (> step 0)
+    (dec step)
+    step))
+
+(defn update-step [step-function animation-list]
+  (map #(update % :step step-function) animation-list))
+
+(defn update-animation-map [animation-map step-function]
+  (let [map-keys (keys animation-map)
+        map-vals (vals animation-map)
+        updated-vals (map #(update-step step-function %) map-vals)
+        updated-animation-map (zipmap map-keys updated-vals)]
+    updated-animation-map))
+
+(defn filter-step [step-predicate animation-list]
+  (filter #(step-predicate (:step %)) animation-list))
+
+(defn filter-animation-map [animation-map step-predicate]
+  (let [map-keys (keys animation-map)
+        map-vals (vals animation-map)
+        filtered-vals (map #(filter-step step-predicate %) map-vals)
+        filtered-animation-map (zipmap map-keys filtered-vals)]
+;;     (println (str "map-keys=" map-keys))
+;;     (println (str "map-vals=" map-vals))
+;;     (println (str "filtered-vals=" filtered-vals))
+;;     (println (str "filtered-animation-map=" filtered-animation-map))
+
+    filtered-animation-map))
+
+
 
 (defn update-state [state]
-;;   (println (str "state=" state))
+  ;;
+  ;;
+;;    (println (str "state=" state))
+  ;;
+  ;;
 
-  (let [data-keys (keys (:data state))
-        data-vals (vals (:data state))
-        updated-vals (map update-step data-vals)
-        updated-data (zipmap data-keys updated-vals)]
-    (assoc state :data updated-data)))
+  (let [filtered-put-animation-map (filter-animation-map (:put-animation-map state) #(<= % 125.0))
+        updated-put-animation-map (update-animation-map filtered-put-animation-map increase-one-step)
+        filtered-get-animation-map (filter-animation-map (:get-animation-map state) #(> % 0.0))
+        updated-get-animation-map (update-animation-map filtered-get-animation-map decrease-one-step)]
+    (assoc state :put-animation-map updated-put-animation-map :get-animation-map updated-get-animation-map)))
 
 (defn radian-positions [number-of-nodes]
   (let [spacer (/ 180 (inc number-of-nodes))
@@ -110,57 +143,124 @@
         radius (distance-from-origin node-x node-y)
         updated-radius (distance-from-origin updated-x updated-y)]
     (apply q/fill (get colors (:color data-point)))
+    (println (str "data-point=" data-point))
     (if (< updated-radius radius)
-      (q/ellipse updated-x updated-y 25 25))))
+      (do
+        (q/ellipse updated-x updated-y 25 25)
+        ; Add the key label to the data point
+        (q/fill 0 0 0)
+        (q/text-align :center :center)
+        (q/text (:name data-point) updated-x updated-y)))))
 
-(defn draw-circle [coordinates data index]
+(defn draw-circle [coordinates put-animation-map get-animation-map index]
   (if (not (empty? coordinates))
     (let [[x y] (first coordinates)
           node-x (* radius x)
           node-y (* radius y)
-          node-list ((keywordize index) data)]
+          put-animation-list ((keywordize index) put-animation-map)
+          get-animation-list ((keywordize index) get-animation-map)]
       ; Draw line from client to node
       (q/line (:x (default-origin)) (:y (default-origin)) node-x node-y)
       ; Color and draw node
       (apply q/fill (get grays (mod index (count grays))))
-;;       (q/fill 255 255 255)
       (q/ellipse node-x node-y 50 50)
-      (doall (map #(draw-data-point node-x node-y %) node-list))
-      (draw-circle (rest coordinates) data (inc index)))))
+      ; Add the index label to the node
+      (q/fill 0 0 0)
+      (q/text-align :center :center)
+      (q/text (str index) node-x node-y)
+      (doall (map #(draw-data-point node-x node-y %) put-animation-list))
+      (doall (map #(draw-data-point node-x node-y %) get-animation-list))
+      (draw-circle (rest coordinates) put-animation-map get-animation-map (inc index)))))
 
-(defn draw-circles [radian-positions data]
+(defn draw-circles [radian-positions put-animation-map get-animation-map]
   (let [coordinates (map #(vector (q/cos %) (q/sin %)) radian-positions)]
-    (draw-circle coordinates data 1))
-  (draw-origin))
+    (draw-circle coordinates put-animation-map get-animation-map 1)))
 
-(defn draw-state [{:keys [number-of-nodes data]}]
+(defn draw-mode [mode]
+  (q/fill 0 0 0)
+  (q/text-align :center :center)
+  (q/text-size 16)
+  (q/text (str "Mode: " (name mode)) (+ radius 30) (+ radius 30)))
+
+(defn draw-title []
+  (q/fill 0 0 0)
+  (q/text-align :center :center)
+  (q/text-size 16)
+  (q/text "Distributed Hash Tool" 0 (* -1 (+ radius 30))))
+
+(defn draw-state [{:keys [number-of-nodes put-animation-map get-animation-map mode]}]
   ; Clear the sketch by filling it with light-grey color.
   (q/background 240)
   (let [radian-positions (radian-positions number-of-nodes)]
     ; Move origin point to the center of the sketch.
     (q/with-translation [(/ (q/width) 2)
                          (/ (q/height) 2)]
-                        (draw-circles radian-positions data))))
+                        (q/text-size 12)
+                        (draw-circles radian-positions put-animation-map get-animation-map)
+                        (draw-origin)
+                        (draw-mode mode)
+                        (draw-title))))
 
 (defn simple-hash [value]
   (.indexOf alphabet-range value))
 
+(defn node-equals? [node-entry key]
+  (= (:key node-entry) key))
+
+(defn node-contains? [node key]
+  (let [node-equals-map (map #(node-equals? % key) node)
+        node-contains? (reduce #(or %1 %2) false node-equals-map)]
+    (println (str "node-contains?=" node-contains?))
+    node-contains?))
+
+
+(defn matching-node-index [state key]
+  (let [number-of-nodes (:number-of-nodes state)]
+    (-> key (name) (simple-hash) (mod number-of-nodes) (inc) (keywordize))))
+
+
+(defn key-animation-map [key step]
+  {:key key
+   :name (name key)
+   :step step
+   :color (-> key (name) (simple-hash) (mod (count colors)))})
+
+(defn node-put [state key]
+  (let [matching-node-index (matching-node-index state key)
+        possible-put-animation-list (-> state :put-animation-map matching-node-index)
+        put-animation-list (if (nil? possible-put-animation-list) (list) possible-put-animation-list)
+        updated-put-animation-list (conj put-animation-list (key-animation-map key 0.0))
+        ;; update the data set as well
+        possible-data-set (-> state :data matching-node-index)
+        data-set (if (nil? possible-data-set) #{} possible-data-set)
+        updated-data-set (conj data-set key)]
+    (-> state
+        (assoc-in [:put-animation-map matching-node-index] updated-put-animation-list)
+        (assoc-in [:data matching-node-index] updated-data-set))))
+
+(defn node-get [state key]
+  (let [matching-node-index (matching-node-index state key)
+        data-set (-> state :data matching-node-index)]
+    (if (contains? data-set key)
+      (let [possible-get-animation-list (-> state :get-animation-map matching-node-index)
+            get-animation-list (if (nil? possible-get-animation-list) (list) possible-get-animation-list)
+            updated-get-animation-list (conj get-animation-list (key-animation-map key 100.0))]
+        (assoc-in state [:get-animation-map matching-node-index] updated-get-animation-list))
+      state)))
+
 (defn key-press [state event]
   (let [key (:key event)
-        {:keys [word number-of-nodes data]} state]
-    (if (and (= key :up) (< number-of-nodes 20))
-      (let [new-number-of-nodes (inc number-of-nodes)]
-        (assoc state :number-of-nodes new-number-of-nodes :data (initialize-node data new-number-of-nodes)))
-      (if (and (= key :down) (> number-of-nodes 1))
-        (assoc state :number-of-nodes (dec number-of-nodes) :data (dissoc data (keywordize number-of-nodes)))
-        (if (clojure.string/includes? alphabet-range (name key))
-          (let [matching-node (-> key (name) (simple-hash) (mod number-of-nodes) (inc) (keywordize))
-                updated-node (conj (matching-node data) {:key key
-                                                         :name (name key)
-                                                         :step 0.0
-                                                         :color (-> key (name) (simple-hash) (mod (count colors)))})]
-            (assoc-in state [:data matching-node] updated-node))
-          state)))))
+        {:keys [number-of-nodes data]} state
+        valid-key (clojure.string/includes? alphabet-range (name key))]
+    (cond
+      (and (= key :up) (< number-of-nodes 20)) (let [new-number-of-nodes (inc number-of-nodes)]
+                                                 (assoc state :number-of-nodes new-number-of-nodes))
+      (and (= key :down) (> number-of-nodes 1)) (assoc state :number-of-nodes (dec number-of-nodes) :data (dissoc data (keywordize number-of-nodes)))
+      (= key :right) (assoc state :mode :put)
+      (= key :left) (assoc state :mode :get)
+      (and valid-key (= (:mode state) :put)) (node-put state key)
+      (and valid-key (= (:mode state) :get)) (node-get state key)
+      :else state)))
 
 (q/defsketch distributed-hash-tool
   :host "distributed-hash-tool"
