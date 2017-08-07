@@ -91,7 +91,7 @@
 (defn update-state [state]
   ;;
   ;;
-;;    (println (str "state=" state))
+   (println (str "state=" state))
   ;;
   ;;
 
