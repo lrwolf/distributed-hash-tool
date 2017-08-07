@@ -84,11 +84,6 @@
         map-vals (vals animation-map)
         filtered-vals (map #(filter-step step-predicate %) map-vals)
         filtered-animation-map (zipmap map-keys filtered-vals)]
-;;     (println (str "map-keys=" map-keys))
-;;     (println (str "map-vals=" map-vals))
-;;     (println (str "filtered-vals=" filtered-vals))
-;;     (println (str "filtered-animation-map=" filtered-animation-map))
-
     filtered-animation-map))
 
 
@@ -143,7 +138,6 @@
         radius (distance-from-origin node-x node-y)
         updated-radius (distance-from-origin updated-x updated-y)]
     (apply q/fill (get colors (:color data-point)))
-    (println (str "data-point=" data-point))
     (if (< updated-radius radius)
       (do
         (q/ellipse updated-x updated-y 25 25)
@@ -201,8 +195,9 @@
                         (draw-mode mode)
                         (draw-title))))
 
-(defn simple-hash [value]
-  (.indexOf alphabet-range value))
+(defn simple-hash [key]
+  (let [key-as-string (name key)]
+    (.indexOf alphabet-range key-as-string)))
 
 (defn node-equals? [node-entry key]
   (= (:key node-entry) key))
@@ -216,14 +211,14 @@
 
 (defn matching-node-index [state key]
   (let [number-of-nodes (:number-of-nodes state)]
-    (-> key (name) (simple-hash) (mod number-of-nodes) (inc) (keywordize))))
+    (-> key (simple-hash) (mod number-of-nodes) (inc) (keywordize))))
 
 
 (defn key-animation-map [key step]
   {:key key
    :name (name key)
    :step step
-   :color (-> key (name) (simple-hash) (mod (count colors)))})
+   :color (-> key (simple-hash) (mod (count colors)))})
 
 (defn node-put [state key]
   (let [matching-node-index (matching-node-index state key)
@@ -248,18 +243,40 @@
         (assoc-in state [:get-animation-map matching-node-index] updated-get-animation-list))
       state)))
 
+(defn node-del [state key]
+  (let [matching-node-index (matching-node-index state key)
+        possible-data-set (-> state :data matching-node-index)
+        data-set (if (nil? possible-data-set) #{} possible-data-set)
+        updated-data-set (disj data-set key)]
+    (assoc-in state [:data matching-node-index] updated-data-set)))
+
+(defn rebalance-data [all-data-set new-number-of-nodes]
+  (reduce #(let [matching-node-index (-> %2 (simple-hash) (mod new-number-of-nodes) (inc) (keywordize))
+                 possible-matching-data-set (matching-node-index %1)
+                 matching-data-set (if (nil? possible-matching-data-set) #{} possible-matching-data-set)]
+             (assoc %1 matching-node-index (conj matching-data-set %2))) {} all-data-set))
+
+(defn rebalance [data new-number-of-nodes]
+  (let [data-vals (vals data)
+        all-data-set (reduce #(into #{} (concat %1 %2)) #{} data-vals)
+        rebalance-all-data (rebalance-all-data all-data-set new-number-of-nodes)]
+    rebalance-all-data))
+
 (defn key-press [state event]
-  (let [key (:key event)
+  (let [{:keys [key key-code]} event
         {:keys [number-of-nodes data]} state
-        valid-key (clojure.string/includes? alphabet-range (name key))]
+        valid-key (clojure.string/includes? alphabet-range (name key))
+        inc-number-of-nodes (inc number-of-nodes)
+        dec-number-of-nodes (dec number-of-nodes)]
     (cond
-      (and (= key :up) (< number-of-nodes 20)) (let [new-number-of-nodes (inc number-of-nodes)]
-                                                 (assoc state :number-of-nodes new-number-of-nodes))
-      (and (= key :down) (> number-of-nodes 1)) (assoc state :number-of-nodes (dec number-of-nodes) :data (dissoc data (keywordize number-of-nodes)))
+      (and (= key :up) (< number-of-nodes 20)) (-> state (assoc :number-of-nodes inc-number-of-nodes) (assoc-in [:data] (rebalance data inc-number-of-nodes)))
+      (and (= key :down) (> number-of-nodes 1)) (-> state (assoc :number-of-nodes dec-number-of-nodes) (assoc-in [:data] (rebalance data dec-number-of-nodes)))
       (= key :right) (assoc state :mode :put)
       (= key :left) (assoc state :mode :get)
+      (= key-code 32) (assoc state :mode :del)
       (and valid-key (= (:mode state) :put)) (node-put state key)
       (and valid-key (= (:mode state) :get)) (node-get state key)
+      (and valid-key (= (:mode state) :del)) (node-del state key)
       :else state)))
 
 (q/defsketch distributed-hash-tool
