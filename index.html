@@ -8,9 +8,16 @@
     <canvas id="distributed-hash-tool"></canvas>
     <br />
     <ul>
-      <li>Use the up and down arrow keys to change the number of nodes.</li>
-      <li>Use the left and right arrow keys to change between get and put mode.</li>
-      <li>Pressing any letter (a-z) will send/retrieve that key to/from the appropriate node.</li>
+      <li>Use the up and down arrow keys to change the number of nodes in the cluster.</li>
+      <ul>
+        <li>The keys present in the nodes will be automatically rebalanced across the updated cluser.</li>
+      </ul>
+      <li>Pressing any letter (a-z) will do the appropriate operation to the appropriate node based on the mode:</li>
+      <ul>
+        <li>Left arrow key : <b>get</b> mode - sends a key to a node to be added (or updated if it is present)</li>
+        <li>Right arrow key : <b>put</b> mode - retrieves a key from a node if it is present</li>
+        <li>Space bar : <b>delete</b> mode - removes a key from a node if it is present</li>
+      </ul>
     </ul>
   </body>
 </html>
