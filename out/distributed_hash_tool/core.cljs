@@ -259,7 +259,7 @@
 (defn rebalance [data new-number-of-nodes]
   (let [data-vals (vals data)
         all-data-set (reduce #(into #{} (concat %1 %2)) #{} data-vals)
-        rebalance-all-data (rebalance-all-data all-data-set new-number-of-nodes)]
+        rebalance-all-data (rebalance-data all-data-set new-number-of-nodes)]
     rebalance-all-data))
 
 (defn key-press [state event]
