@@ -50,45 +50,45 @@ return step;
 }
 });
 distributed_hash_tool.core.update_step = (function distributed_hash_tool$core$update_step(step_function,animation_list){
-return cljs.core.map.call(null,(function (p1__26705_SHARP_){
-return cljs.core.update.call(null,p1__26705_SHARP_,new cljs.core.Keyword(null,"step","step",1288888124),step_function);
+return cljs.core.map.call(null,(function (p1__8485_SHARP_){
+return cljs.core.update.call(null,p1__8485_SHARP_,new cljs.core.Keyword(null,"step","step",1288888124),step_function);
 }),animation_list);
 });
 distributed_hash_tool.core.update_animation_map = (function distributed_hash_tool$core$update_animation_map(animation_map,step_function){
 var map_keys = cljs.core.keys.call(null,animation_map);
 var map_vals = cljs.core.vals.call(null,animation_map);
 var updated_vals = cljs.core.map.call(null,((function (map_keys,map_vals){
-return (function (p1__26706_SHARP_){
-return distributed_hash_tool.core.update_step.call(null,step_function,p1__26706_SHARP_);
+return (function (p1__8486_SHARP_){
+return distributed_hash_tool.core.update_step.call(null,step_function,p1__8486_SHARP_);
 });})(map_keys,map_vals))
 ,map_vals);
 var updated_animation_map = cljs.core.zipmap.call(null,map_keys,updated_vals);
 return updated_animation_map;
 });
 distributed_hash_tool.core.filter_step = (function distributed_hash_tool$core$filter_step(step_predicate,animation_list){
-return cljs.core.filter.call(null,(function (p1__26707_SHARP_){
-return step_predicate.call(null,new cljs.core.Keyword(null,"step","step",1288888124).cljs$core$IFn$_invoke$arity$1(p1__26707_SHARP_));
+return cljs.core.filter.call(null,(function (p1__8487_SHARP_){
+return step_predicate.call(null,new cljs.core.Keyword(null,"step","step",1288888124).cljs$core$IFn$_invoke$arity$1(p1__8487_SHARP_));
 }),animation_list);
 });
 distributed_hash_tool.core.filter_animation_map = (function distributed_hash_tool$core$filter_animation_map(animation_map,step_predicate){
 var map_keys = cljs.core.keys.call(null,animation_map);
 var map_vals = cljs.core.vals.call(null,animation_map);
 var filtered_vals = cljs.core.map.call(null,((function (map_keys,map_vals){
-return (function (p1__26708_SHARP_){
-return distributed_hash_tool.core.filter_step.call(null,step_predicate,p1__26708_SHARP_);
+return (function (p1__8488_SHARP_){
+return distributed_hash_tool.core.filter_step.call(null,step_predicate,p1__8488_SHARP_);
 });})(map_keys,map_vals))
 ,map_vals);
 var filtered_animation_map = cljs.core.zipmap.call(null,map_keys,filtered_vals);
 return filtered_animation_map;
 });
 distributed_hash_tool.core.update_state = (function distributed_hash_tool$core$update_state(state){
-var filtered_put_animation_map = distributed_hash_tool.core.filter_animation_map.call(null,new cljs.core.Keyword(null,"put-animation-map","put-animation-map",1814380072).cljs$core$IFn$_invoke$arity$1(state),(function (p1__26709_SHARP_){
-return (p1__26709_SHARP_ <= 125.0);
+var filtered_put_animation_map = distributed_hash_tool.core.filter_animation_map.call(null,new cljs.core.Keyword(null,"put-animation-map","put-animation-map",1814380072).cljs$core$IFn$_invoke$arity$1(state),(function (p1__8489_SHARP_){
+return (p1__8489_SHARP_ <= 125.0);
 }));
 var updated_put_animation_map = distributed_hash_tool.core.update_animation_map.call(null,filtered_put_animation_map,distributed_hash_tool.core.increase_one_step);
 var filtered_get_animation_map = distributed_hash_tool.core.filter_animation_map.call(null,new cljs.core.Keyword(null,"get-animation-map","get-animation-map",1364318217).cljs$core$IFn$_invoke$arity$1(state),((function (filtered_put_animation_map,updated_put_animation_map){
-return (function (p1__26710_SHARP_){
-return (p1__26710_SHARP_ > 0.0);
+return (function (p1__8490_SHARP_){
+return (p1__8490_SHARP_ > 0.0);
 });})(filtered_put_animation_map,updated_put_animation_map))
 );
 var updated_get_animation_map = distributed_hash_tool.core.update_animation_map.call(null,filtered_get_animation_map,distributed_hash_tool.core.decrease_one_step);
@@ -97,13 +97,13 @@ return cljs.core.assoc.call(null,state,new cljs.core.Keyword(null,"put-animation
 distributed_hash_tool.core.radian_positions = (function distributed_hash_tool$core$radian_positions(number_of_nodes){
 var spacer = ((180) / (number_of_nodes + (1)));
 var degree_positions = cljs.core.map.call(null,((function (spacer){
-return (function (p1__26711_SHARP_){
-return (p1__26711_SHARP_ * spacer);
+return (function (p1__8491_SHARP_){
+return (p1__8491_SHARP_ * spacer);
 });})(spacer))
 ,cljs.core.range.call(null,(1),(number_of_nodes + (1))));
 var translated_degree_positions = cljs.core.map.call(null,((function (spacer,degree_positions){
-return (function (p1__26712_SHARP_){
-return cljs.core.mod.call(null,((270) + p1__26712_SHARP_),(360));
+return (function (p1__8492_SHARP_){
+return cljs.core.mod.call(null,((270) + p1__8492_SHARP_),(360));
 });})(spacer,degree_positions))
 ,degree_positions);
 return cljs.core.map.call(null,quil.core.radians,translated_degree_positions);
@@ -152,9 +152,9 @@ return null;
 });
 distributed_hash_tool.core.draw_circle = (function distributed_hash_tool$core$draw_circle(coordinates,put_animation_map,get_animation_map,index){
 if(!(cljs.core.empty_QMARK_.call(null,coordinates))){
-var vec__26718 = cljs.core.first.call(null,coordinates);
-var x = cljs.core.nth.call(null,vec__26718,(0),null);
-var y = cljs.core.nth.call(null,vec__26718,(1),null);
+var vec__8498 = cljs.core.first.call(null,coordinates);
+var x = cljs.core.nth.call(null,vec__8498,(0),null);
+var y = cljs.core.nth.call(null,vec__8498,(1),null);
 var node_x = (distributed_hash_tool.core.radius * x);
 var node_y = (distributed_hash_tool.core.radius * y);
 var put_animation_list = distributed_hash_tool.core.keywordize.call(null,index).call(null,put_animation_map);
@@ -171,16 +171,16 @@ quil.core.text_align.call(null,new cljs.core.Keyword(null,"center","center",-748
 
 quil.core.text.call(null,[cljs.core.str.cljs$core$IFn$_invoke$arity$1(index)].join(''),node_x,node_y);
 
-cljs.core.doall.call(null,cljs.core.map.call(null,((function (vec__26718,x,y,node_x,node_y,put_animation_list,get_animation_list){
-return (function (p1__26713_SHARP_){
-return distributed_hash_tool.core.draw_data_point.call(null,node_x,node_y,p1__26713_SHARP_);
-});})(vec__26718,x,y,node_x,node_y,put_animation_list,get_animation_list))
+cljs.core.doall.call(null,cljs.core.map.call(null,((function (vec__8498,x,y,node_x,node_y,put_animation_list,get_animation_list){
+return (function (p1__8493_SHARP_){
+return distributed_hash_tool.core.draw_data_point.call(null,node_x,node_y,p1__8493_SHARP_);
+});})(vec__8498,x,y,node_x,node_y,put_animation_list,get_animation_list))
 ,put_animation_list));
 
-cljs.core.doall.call(null,cljs.core.map.call(null,((function (vec__26718,x,y,node_x,node_y,put_animation_list,get_animation_list){
-return (function (p1__26714_SHARP_){
-return distributed_hash_tool.core.draw_data_point.call(null,node_x,node_y,p1__26714_SHARP_);
-});})(vec__26718,x,y,node_x,node_y,put_animation_list,get_animation_list))
+cljs.core.doall.call(null,cljs.core.map.call(null,((function (vec__8498,x,y,node_x,node_y,put_animation_list,get_animation_list){
+return (function (p1__8494_SHARP_){
+return distributed_hash_tool.core.draw_data_point.call(null,node_x,node_y,p1__8494_SHARP_);
+});})(vec__8498,x,y,node_x,node_y,put_animation_list,get_animation_list))
 ,get_animation_list));
 
 return distributed_hash_tool.core.draw_circle.call(null,cljs.core.rest.call(null,coordinates),put_animation_map,get_animation_map,(index + (1)));
@@ -189,8 +189,8 @@ return null;
 }
 });
 distributed_hash_tool.core.draw_circles = (function distributed_hash_tool$core$draw_circles(radian_positions,put_animation_map,get_animation_map){
-var coordinates = cljs.core.map.call(null,(function (p1__26721_SHARP_){
-return (new cljs.core.PersistentVector(null,2,(5),cljs.core.PersistentVector.EMPTY_NODE,[quil.core.cos.call(null,p1__26721_SHARP_),quil.core.sin.call(null,p1__26721_SHARP_)],null));
+var coordinates = cljs.core.map.call(null,(function (p1__8501_SHARP_){
+return (new cljs.core.PersistentVector(null,2,(5),cljs.core.PersistentVector.EMPTY_NODE,[quil.core.cos.call(null,p1__8501_SHARP_),quil.core.sin.call(null,p1__8501_SHARP_)],null));
 }),radian_positions);
 return distributed_hash_tool.core.draw_circle.call(null,coordinates,put_animation_map,get_animation_map,(1));
 });
@@ -212,26 +212,33 @@ quil.core.text_size.call(null,(16));
 
 return quil.core.text.call(null,"Distributed Hash Tool",(0),((-1) * (distributed_hash_tool.core.radius + (30))));
 });
-distributed_hash_tool.core.draw_state = (function distributed_hash_tool$core$draw_state(p__26722){
-var map__26725 = p__26722;
-var map__26725__$1 = ((((!((map__26725 == null)))?((((map__26725.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__26725.cljs$core$ISeq$)))?true:false):false))?cljs.core.apply.call(null,cljs.core.hash_map,map__26725):map__26725);
-var number_of_nodes = cljs.core.get.call(null,map__26725__$1,new cljs.core.Keyword(null,"number-of-nodes","number-of-nodes",-1529977873));
-var put_animation_map = cljs.core.get.call(null,map__26725__$1,new cljs.core.Keyword(null,"put-animation-map","put-animation-map",1814380072));
-var get_animation_map = cljs.core.get.call(null,map__26725__$1,new cljs.core.Keyword(null,"get-animation-map","get-animation-map",1364318217));
-var mode = cljs.core.get.call(null,map__26725__$1,new cljs.core.Keyword(null,"mode","mode",654403691));
+distributed_hash_tool.core.draw_buttons = (function distributed_hash_tool$core$draw_buttons(){
+cljs.core.print.call(null,[cljs.core.str.cljs$core$IFn$_invoke$arity$1("origin="),cljs.core.str.cljs$core$IFn$_invoke$arity$1(new cljs.core.Keyword(null,"x","x",2099068185).cljs$core$IFn$_invoke$arity$1(distributed_hash_tool.core.default_origin.call(null)))].join(''));
+
+return quil.core.ellipse.call(null,new cljs.core.Keyword(null,"x","x",2099068185).cljs$core$IFn$_invoke$arity$1((1)),new cljs.core.Keyword(null,"y","y",-1757859776).cljs$core$IFn$_invoke$arity$1((-10)),(75),(40));
+});
+distributed_hash_tool.core.draw_state = (function distributed_hash_tool$core$draw_state(p__8502){
+var map__8505 = p__8502;
+var map__8505__$1 = ((((!((map__8505 == null)))?((((map__8505.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__8505.cljs$core$ISeq$)))?true:false):false))?cljs.core.apply.call(null,cljs.core.hash_map,map__8505):map__8505);
+var number_of_nodes = cljs.core.get.call(null,map__8505__$1,new cljs.core.Keyword(null,"number-of-nodes","number-of-nodes",-1529977873));
+var put_animation_map = cljs.core.get.call(null,map__8505__$1,new cljs.core.Keyword(null,"put-animation-map","put-animation-map",1814380072));
+var get_animation_map = cljs.core.get.call(null,map__8505__$1,new cljs.core.Keyword(null,"get-animation-map","get-animation-map",1364318217));
+var mode = cljs.core.get.call(null,map__8505__$1,new cljs.core.Keyword(null,"mode","mode",654403691));
 quil.core.background.call(null,(240));
 
 var radian_positions = distributed_hash_tool.core.radian_positions.call(null,number_of_nodes);
-var tr__9239__auto__ = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [(quil.core.width.call(null) / (2)),(quil.core.height.call(null) / (2))], null);
+var tr__8408__auto__ = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [(quil.core.width.call(null) / (2)),(quil.core.height.call(null) / (2))], null);
 quil.core.push_matrix.call(null);
 
-try{quil.core.translate.call(null,tr__9239__auto__);
+try{quil.core.translate.call(null,tr__8408__auto__);
 
 quil.core.text_size.call(null,(12));
 
 distributed_hash_tool.core.draw_circles.call(null,radian_positions,put_animation_map,get_animation_map);
 
 distributed_hash_tool.core.draw_origin.call(null);
+
+distributed_hash_tool.core.draw_buttons.call(null);
 
 distributed_hash_tool.core.draw_mode.call(null,mode);
 
@@ -246,16 +253,16 @@ distributed_hash_tool.core.node_equals_QMARK_ = (function distributed_hash_tool$
 return cljs.core._EQ_.call(null,new cljs.core.Keyword(null,"key","key",-1516042587).cljs$core$IFn$_invoke$arity$1(node_entry),key);
 });
 distributed_hash_tool.core.node_contains_QMARK_ = (function distributed_hash_tool$core$node_contains_QMARK_(node,key){
-var node_equals_map = cljs.core.map.call(null,(function (p1__26727_SHARP_){
-return distributed_hash_tool.core.node_equals_QMARK_.call(null,p1__26727_SHARP_,key);
+var node_equals_map = cljs.core.map.call(null,(function (p1__8507_SHARP_){
+return distributed_hash_tool.core.node_equals_QMARK_.call(null,p1__8507_SHARP_,key);
 }),node);
 var node_contains_QMARK_ = cljs.core.reduce.call(null,((function (node_equals_map){
-return (function (p1__26728_SHARP_,p2__26729_SHARP_){
-var or__6814__auto__ = p1__26728_SHARP_;
-if(cljs.core.truth_(or__6814__auto__)){
-return or__6814__auto__;
+return (function (p1__8508_SHARP_,p2__8509_SHARP_){
+var or__6824__auto__ = p1__8508_SHARP_;
+if(cljs.core.truth_(or__6824__auto__)){
+return or__6824__auto__;
 } else {
-return p2__26729_SHARP_;
+return p2__8509_SHARP_;
 }
 });})(node_equals_map))
 ,false,node_equals_map);
@@ -300,32 +307,32 @@ var updated_data_set = cljs.core.disj.call(null,data_set,key);
 return cljs.core.assoc_in.call(null,state,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"data","data",-232669377),matching_node_index], null),updated_data_set);
 });
 distributed_hash_tool.core.rebalance_data = (function distributed_hash_tool$core$rebalance_data(all_data_set,new_number_of_nodes){
-return cljs.core.reduce.call(null,(function (p1__26731_SHARP_,p2__26730_SHARP_){
-var matching_node_index = distributed_hash_tool.core.keywordize.call(null,(cljs.core.mod.call(null,distributed_hash_tool.core.simple_hash.call(null,p2__26730_SHARP_),new_number_of_nodes) + (1)));
-var possible_matching_data_set = matching_node_index.call(null,p1__26731_SHARP_);
+return cljs.core.reduce.call(null,(function (p1__8511_SHARP_,p2__8510_SHARP_){
+var matching_node_index = distributed_hash_tool.core.keywordize.call(null,(cljs.core.mod.call(null,distributed_hash_tool.core.simple_hash.call(null,p2__8510_SHARP_),new_number_of_nodes) + (1)));
+var possible_matching_data_set = matching_node_index.call(null,p1__8511_SHARP_);
 var matching_data_set = (((possible_matching_data_set == null))?cljs.core.PersistentHashSet.EMPTY:possible_matching_data_set);
-return cljs.core.assoc.call(null,p1__26731_SHARP_,matching_node_index,cljs.core.conj.call(null,matching_data_set,p2__26730_SHARP_));
+return cljs.core.assoc.call(null,p1__8511_SHARP_,matching_node_index,cljs.core.conj.call(null,matching_data_set,p2__8510_SHARP_));
 }),cljs.core.PersistentArrayMap.EMPTY,all_data_set);
 });
 distributed_hash_tool.core.rebalance = (function distributed_hash_tool$core$rebalance(data,new_number_of_nodes){
 var data_vals = cljs.core.vals.call(null,data);
 var all_data_set = cljs.core.reduce.call(null,((function (data_vals){
-return (function (p1__26732_SHARP_,p2__26733_SHARP_){
-return cljs.core.into.call(null,cljs.core.PersistentHashSet.EMPTY,cljs.core.concat.call(null,p1__26732_SHARP_,p2__26733_SHARP_));
+return (function (p1__8512_SHARP_,p2__8513_SHARP_){
+return cljs.core.into.call(null,cljs.core.PersistentHashSet.EMPTY,cljs.core.concat.call(null,p1__8512_SHARP_,p2__8513_SHARP_));
 });})(data_vals))
 ,cljs.core.PersistentHashSet.EMPTY,data_vals);
 var rebalance_all_data = distributed_hash_tool.core.rebalance_data.call(null,all_data_set,new_number_of_nodes);
 return rebalance_all_data;
 });
 distributed_hash_tool.core.key_press = (function distributed_hash_tool$core$key_press(state,event){
-var map__26738 = event;
-var map__26738__$1 = ((((!((map__26738 == null)))?((((map__26738.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__26738.cljs$core$ISeq$)))?true:false):false))?cljs.core.apply.call(null,cljs.core.hash_map,map__26738):map__26738);
-var key = cljs.core.get.call(null,map__26738__$1,new cljs.core.Keyword(null,"key","key",-1516042587));
-var key_code = cljs.core.get.call(null,map__26738__$1,new cljs.core.Keyword(null,"key-code","key-code",-1732114304));
-var map__26739 = state;
-var map__26739__$1 = ((((!((map__26739 == null)))?((((map__26739.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__26739.cljs$core$ISeq$)))?true:false):false))?cljs.core.apply.call(null,cljs.core.hash_map,map__26739):map__26739);
-var number_of_nodes = cljs.core.get.call(null,map__26739__$1,new cljs.core.Keyword(null,"number-of-nodes","number-of-nodes",-1529977873));
-var data = cljs.core.get.call(null,map__26739__$1,new cljs.core.Keyword(null,"data","data",-232669377));
+var map__8518 = event;
+var map__8518__$1 = ((((!((map__8518 == null)))?((((map__8518.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__8518.cljs$core$ISeq$)))?true:false):false))?cljs.core.apply.call(null,cljs.core.hash_map,map__8518):map__8518);
+var key = cljs.core.get.call(null,map__8518__$1,new cljs.core.Keyword(null,"key","key",-1516042587));
+var key_code = cljs.core.get.call(null,map__8518__$1,new cljs.core.Keyword(null,"key-code","key-code",-1732114304));
+var map__8519 = state;
+var map__8519__$1 = ((((!((map__8519 == null)))?((((map__8519.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__8519.cljs$core$ISeq$)))?true:false):false))?cljs.core.apply.call(null,cljs.core.hash_map,map__8519):map__8519);
+var number_of_nodes = cljs.core.get.call(null,map__8519__$1,new cljs.core.Keyword(null,"number-of-nodes","number-of-nodes",-1529977873));
+var data = cljs.core.get.call(null,map__8519__$1,new cljs.core.Keyword(null,"data","data",-232669377));
 var valid_key = clojure.string.includes_QMARK_.call(null,distributed_hash_tool.core.alphabet_range,cljs.core.name.call(null,key));
 var inc_number_of_nodes = (number_of_nodes + (1));
 var dec_number_of_nodes = (number_of_nodes - (1));
@@ -364,93 +371,120 @@ return state;
 }
 }
 });
+distributed_hash_tool.core.mouse_click = (function distributed_hash_tool$core$mouse_click(state,event){
+cljs.core.println.call(null,[cljs.core.str.cljs$core$IFn$_invoke$arity$1("state="),cljs.core.str.cljs$core$IFn$_invoke$arity$1(state)].join(''));
+
+cljs.core.println.call(null,[cljs.core.str.cljs$core$IFn$_invoke$arity$1("event="),cljs.core.str.cljs$core$IFn$_invoke$arity$1(event)].join(''));
+
+return state;
+});
 distributed_hash_tool.core.distributed_hash_tool = (function distributed_hash_tool$core$distributed_hash_tool(){
-return quil.sketch.sketch.call(null,new cljs.core.Keyword(null,"host","host",-1558485167),"distributed-hash-tool",new cljs.core.Keyword(null,"update","update",1045576396),((cljs.core.fn_QMARK_.call(null,distributed_hash_tool.core.update_state))?(function() { 
-var G__26742__delegate = function (args){
+return quil.sketch.sketch.call(null,new cljs.core.Keyword(null,"host","host",-1558485167),"distributed-hash-tool",new cljs.core.Keyword(null,"mouse-clicked","mouse-clicked",-199339421),((cljs.core.fn_QMARK_.call(null,distributed_hash_tool.core.mouse_click))?(function() { 
+var G__8522__delegate = function (args){
+return cljs.core.apply.call(null,distributed_hash_tool.core.mouse_click,args);
+};
+var G__8522 = function (var_args){
+var args = null;
+if (arguments.length > 0) {
+var G__8523__i = 0, G__8523__a = new Array(arguments.length -  0);
+while (G__8523__i < G__8523__a.length) {G__8523__a[G__8523__i] = arguments[G__8523__i + 0]; ++G__8523__i;}
+  args = new cljs.core.IndexedSeq(G__8523__a,0);
+} 
+return G__8522__delegate.call(this,args);};
+G__8522.cljs$lang$maxFixedArity = 0;
+G__8522.cljs$lang$applyTo = (function (arglist__8524){
+var args = cljs.core.seq(arglist__8524);
+return G__8522__delegate(args);
+});
+G__8522.cljs$core$IFn$_invoke$arity$variadic = G__8522__delegate;
+return G__8522;
+})()
+:distributed_hash_tool.core.mouse_click),new cljs.core.Keyword(null,"update","update",1045576396),((cljs.core.fn_QMARK_.call(null,distributed_hash_tool.core.update_state))?(function() { 
+var G__8525__delegate = function (args){
 return cljs.core.apply.call(null,distributed_hash_tool.core.update_state,args);
 };
-var G__26742 = function (var_args){
+var G__8525 = function (var_args){
 var args = null;
 if (arguments.length > 0) {
-var G__26743__i = 0, G__26743__a = new Array(arguments.length -  0);
-while (G__26743__i < G__26743__a.length) {G__26743__a[G__26743__i] = arguments[G__26743__i + 0]; ++G__26743__i;}
-  args = new cljs.core.IndexedSeq(G__26743__a,0);
+var G__8526__i = 0, G__8526__a = new Array(arguments.length -  0);
+while (G__8526__i < G__8526__a.length) {G__8526__a[G__8526__i] = arguments[G__8526__i + 0]; ++G__8526__i;}
+  args = new cljs.core.IndexedSeq(G__8526__a,0);
 } 
-return G__26742__delegate.call(this,args);};
-G__26742.cljs$lang$maxFixedArity = 0;
-G__26742.cljs$lang$applyTo = (function (arglist__26744){
-var args = cljs.core.seq(arglist__26744);
-return G__26742__delegate(args);
+return G__8525__delegate.call(this,args);};
+G__8525.cljs$lang$maxFixedArity = 0;
+G__8525.cljs$lang$applyTo = (function (arglist__8527){
+var args = cljs.core.seq(arglist__8527);
+return G__8525__delegate(args);
 });
-G__26742.cljs$core$IFn$_invoke$arity$variadic = G__26742__delegate;
-return G__26742;
+G__8525.cljs$core$IFn$_invoke$arity$variadic = G__8525__delegate;
+return G__8525;
 })()
 :distributed_hash_tool.core.update_state),new cljs.core.Keyword(null,"size","size",1098693007),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [(500),(500)], null),new cljs.core.Keyword(null,"setup","setup",1987730512),((cljs.core.fn_QMARK_.call(null,distributed_hash_tool.core.setup))?(function() { 
-var G__26745__delegate = function (args){
+var G__8528__delegate = function (args){
 return cljs.core.apply.call(null,distributed_hash_tool.core.setup,args);
 };
-var G__26745 = function (var_args){
+var G__8528 = function (var_args){
 var args = null;
 if (arguments.length > 0) {
-var G__26746__i = 0, G__26746__a = new Array(arguments.length -  0);
-while (G__26746__i < G__26746__a.length) {G__26746__a[G__26746__i] = arguments[G__26746__i + 0]; ++G__26746__i;}
-  args = new cljs.core.IndexedSeq(G__26746__a,0);
+var G__8529__i = 0, G__8529__a = new Array(arguments.length -  0);
+while (G__8529__i < G__8529__a.length) {G__8529__a[G__8529__i] = arguments[G__8529__i + 0]; ++G__8529__i;}
+  args = new cljs.core.IndexedSeq(G__8529__a,0);
 } 
-return G__26745__delegate.call(this,args);};
-G__26745.cljs$lang$maxFixedArity = 0;
-G__26745.cljs$lang$applyTo = (function (arglist__26747){
-var args = cljs.core.seq(arglist__26747);
-return G__26745__delegate(args);
+return G__8528__delegate.call(this,args);};
+G__8528.cljs$lang$maxFixedArity = 0;
+G__8528.cljs$lang$applyTo = (function (arglist__8530){
+var args = cljs.core.seq(arglist__8530);
+return G__8528__delegate(args);
 });
-G__26745.cljs$core$IFn$_invoke$arity$variadic = G__26745__delegate;
-return G__26745;
+G__8528.cljs$core$IFn$_invoke$arity$variadic = G__8528__delegate;
+return G__8528;
 })()
 :distributed_hash_tool.core.setup),new cljs.core.Keyword(null,"middleware","middleware",1462115504),new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [quil.middleware.fun_mode], null),new cljs.core.Keyword(null,"key-pressed","key-pressed",-757100364),((cljs.core.fn_QMARK_.call(null,distributed_hash_tool.core.key_press))?(function() { 
-var G__26748__delegate = function (args){
+var G__8531__delegate = function (args){
 return cljs.core.apply.call(null,distributed_hash_tool.core.key_press,args);
 };
-var G__26748 = function (var_args){
+var G__8531 = function (var_args){
 var args = null;
 if (arguments.length > 0) {
-var G__26749__i = 0, G__26749__a = new Array(arguments.length -  0);
-while (G__26749__i < G__26749__a.length) {G__26749__a[G__26749__i] = arguments[G__26749__i + 0]; ++G__26749__i;}
-  args = new cljs.core.IndexedSeq(G__26749__a,0);
+var G__8532__i = 0, G__8532__a = new Array(arguments.length -  0);
+while (G__8532__i < G__8532__a.length) {G__8532__a[G__8532__i] = arguments[G__8532__i + 0]; ++G__8532__i;}
+  args = new cljs.core.IndexedSeq(G__8532__a,0);
 } 
-return G__26748__delegate.call(this,args);};
-G__26748.cljs$lang$maxFixedArity = 0;
-G__26748.cljs$lang$applyTo = (function (arglist__26750){
-var args = cljs.core.seq(arglist__26750);
-return G__26748__delegate(args);
+return G__8531__delegate.call(this,args);};
+G__8531.cljs$lang$maxFixedArity = 0;
+G__8531.cljs$lang$applyTo = (function (arglist__8533){
+var args = cljs.core.seq(arglist__8533);
+return G__8531__delegate(args);
 });
-G__26748.cljs$core$IFn$_invoke$arity$variadic = G__26748__delegate;
-return G__26748;
+G__8531.cljs$core$IFn$_invoke$arity$variadic = G__8531__delegate;
+return G__8531;
 })()
 :distributed_hash_tool.core.key_press),new cljs.core.Keyword(null,"draw","draw",1358331674),((cljs.core.fn_QMARK_.call(null,distributed_hash_tool.core.draw_state))?(function() { 
-var G__26751__delegate = function (args){
+var G__8534__delegate = function (args){
 return cljs.core.apply.call(null,distributed_hash_tool.core.draw_state,args);
 };
-var G__26751 = function (var_args){
+var G__8534 = function (var_args){
 var args = null;
 if (arguments.length > 0) {
-var G__26752__i = 0, G__26752__a = new Array(arguments.length -  0);
-while (G__26752__i < G__26752__a.length) {G__26752__a[G__26752__i] = arguments[G__26752__i + 0]; ++G__26752__i;}
-  args = new cljs.core.IndexedSeq(G__26752__a,0);
+var G__8535__i = 0, G__8535__a = new Array(arguments.length -  0);
+while (G__8535__i < G__8535__a.length) {G__8535__a[G__8535__i] = arguments[G__8535__i + 0]; ++G__8535__i;}
+  args = new cljs.core.IndexedSeq(G__8535__a,0);
 } 
-return G__26751__delegate.call(this,args);};
-G__26751.cljs$lang$maxFixedArity = 0;
-G__26751.cljs$lang$applyTo = (function (arglist__26753){
-var args = cljs.core.seq(arglist__26753);
-return G__26751__delegate(args);
+return G__8534__delegate.call(this,args);};
+G__8534.cljs$lang$maxFixedArity = 0;
+G__8534.cljs$lang$applyTo = (function (arglist__8536){
+var args = cljs.core.seq(arglist__8536);
+return G__8534__delegate(args);
 });
-G__26751.cljs$core$IFn$_invoke$arity$variadic = G__26751__delegate;
-return G__26751;
+G__8534.cljs$core$IFn$_invoke$arity$variadic = G__8534__delegate;
+return G__8534;
 })()
 :distributed_hash_tool.core.draw_state));
 });
 goog.exportSymbol('distributed_hash_tool.core.distributed_hash_tool', distributed_hash_tool.core.distributed_hash_tool);
 
-if(cljs.core.truth_(cljs.core.some.call(null,(function (p1__8147__8148__auto__){
-return cljs.core._EQ_.call(null,new cljs.core.Keyword(null,"no-start","no-start",1381488856),p1__8147__8148__auto__);
+if(cljs.core.truth_(cljs.core.some.call(null,(function (p1__8021__8022__auto__){
+return cljs.core._EQ_.call(null,new cljs.core.Keyword(null,"no-start","no-start",1381488856),p1__8021__8022__auto__);
 }),null))){
 } else {
 quil.sketch.add_sketch_to_init_list.call(null,new cljs.core.PersistentArrayMap(null, 2, [new cljs.core.Keyword(null,"fn","fn",-1175266204),distributed_hash_tool.core.distributed_hash_tool,new cljs.core.Keyword(null,"host-id","host-id",742376279),"distributed-hash-tool"], null));

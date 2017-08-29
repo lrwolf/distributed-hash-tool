@@ -182,6 +182,11 @@
   (q/text-size 16)
   (q/text "Distributed Hash Tool" 0 (* -1 (+ radius 30))))
 
+(defn draw-buttons []
+  (print (str "origin=" (:x (default-origin))))
+   (q/ellipse (:x 1) (:y -10) 75 40))
+
+
 (defn draw-state [{:keys [number-of-nodes put-animation-map get-animation-map mode]}]
   ; Clear the sketch by filling it with light-grey color.
   (q/background 240)
@@ -192,6 +197,7 @@
                         (q/text-size 12)
                         (draw-circles radian-positions put-animation-map get-animation-map)
                         (draw-origin)
+                        (draw-buttons)
                         (draw-mode mode)
                         (draw-title))))
 
@@ -279,6 +285,11 @@
       (and valid-key (= (:mode state) :del)) (node-del state key)
       :else state)))
 
+(defn mouse-click [state event]
+  (println (str "state=" state))
+  (println (str "event=" event))
+  state)
+
 (q/defsketch distributed-hash-tool
   :host "distributed-hash-tool"
   :size [500 500]
@@ -291,4 +302,5 @@
   ; This sketch uses functional-mode middleware.
   ; Check quil wiki for more info about middlewares and particularly
   ; fun-mode.
+  :mouse-clicked mouse-click
   :middleware [m/fun-mode])

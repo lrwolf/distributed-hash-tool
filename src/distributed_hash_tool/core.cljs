@@ -182,9 +182,38 @@
   (q/text-size 16)
   (q/text "Distributed Hash Tool" 0 (* -1 (+ radius 30))))
 
+(defn button-positions [number-of-nodes]
+  (let [spacer (/ 180 (inc number-of-nodes))
+        ; Space the nodes out evenly along a semi-circle
+        degree-positions (map #(* % spacer) (range 1 (inc number-of-nodes)))
+        ; Translate those nodes to appear on the right-half of the screen
+        translated-degree-positions (map #(mod (+ 90 %) 360) degree-positions)]
+    (map q/radians translated-degree-positions)))
+
+(defn draw-button [coordinates]
+  (if (not (empty? coordinates))
+    (let [[x y] (first coordinates)
+          node-x (* radius x)
+          node-y (* radius y)]
+      ; Color and draw node
+      (apply q/fill [194 194 239])
+      (q/ellipse node-x node-y 75 40)
+      ; Add the index label to the node
+      (q/fill 0 0 0)
+      (q/text-align :center :center)
+      (q/text "foo" node-x node-y)
+      (draw-button (rest coordinates)))))
+
+
+
+(defn draw-buttons []
+  (let [coordinates (map #(vector (q/cos %) (q/sin %)) (button-positions 3))]
+    (draw-button coordinates)))
+
+
 (defn draw-state [{:keys [number-of-nodes put-animation-map get-animation-map mode]}]
   ; Clear the sketch by filling it with light-grey color.
-  (q/background 240)
+  (q/background 255)
   (let [radian-positions (radian-positions number-of-nodes)]
     ; Move origin point to the center of the sketch.
     (q/with-translation [(/ (q/width) 2)
@@ -192,6 +221,7 @@
                         (q/text-size 12)
                         (draw-circles radian-positions put-animation-map get-animation-map)
                         (draw-origin)
+                        (draw-buttons)
                         (draw-mode mode)
                         (draw-title))))
 
@@ -279,6 +309,19 @@
       (and valid-key (= (:mode state) :del)) (node-del state key)
       :else state)))
 
+(defn is-between [value left right]
+  (and (> value left) (< value right)))
+
+(defn mouse-click [state event]
+  (let [x (:x event)
+        y (:y event)
+        random-letter (get alphabet-range (rand-int 6))
+        random-keyword (keyword random-letter)]
+    (cond
+      (and (is-between x 105 180) (is-between y 120 160)) (node-get (assoc state :mode :get) random-keyword)
+      (and (is-between x 60 135) (is-between y 230 270)) (node-put (assoc state :mode :put) random-keyword)
+      (and (is-between x 105 180) (is-between y 335 375))(node-del (assoc state :mode :del) random-keyword))))
+
 (q/defsketch distributed-hash-tool
   :host "distributed-hash-tool"
   :size [500 500]
@@ -291,4 +334,5 @@
   ; This sketch uses functional-mode middleware.
   ; Check quil wiki for more info about middlewares and particularly
   ; fun-mode.
+  :mouse-clicked mouse-click
   :middleware [m/fun-mode])
