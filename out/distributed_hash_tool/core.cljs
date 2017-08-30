@@ -17,6 +17,8 @@
             [211 211 211]
             [245 245 245]])
 
+(def button-labels ["DEL" "PUT" "GET"])
+
 (defn keywordize [index]
   (-> index (str) (keyword)))
 
@@ -170,11 +172,14 @@
   (let [coordinates (map #(vector (q/cos %) (q/sin %)) radian-positions)]
     (draw-circle coordinates put-animation-map get-animation-map 1)))
 
-(defn draw-mode [mode]
+(defn draw-text [value x y]
   (q/fill 0 0 0)
-  (q/text-align :center :center)
+  (q/text-align :left :center)
   (q/text-size 16)
-  (q/text (str "Mode: " (name mode)) (+ radius 30) (+ radius 30)))
+  (q/text value x y))
+
+;; (defn draw-mode [mode]
+;;   (draw-text (str "Mode: " (clojure.string/upper-case (name mode))) 400 420))
 
 (defn draw-title []
   (q/fill 0 0 0)
@@ -182,23 +187,49 @@
   (q/text-size 16)
   (q/text "Distributed Hash Tool" 0 (* -1 (+ radius 30))))
 
+(defn button-positions [number-of-nodes]
+  (let [spacer (/ 180 (inc number-of-nodes))
+        ; Space the nodes out evenly along a semi-circle
+        degree-positions (map #(* % spacer) (range 1 (inc number-of-nodes)))
+        ; Translate those nodes to appear on the right-half of the screen
+        translated-degree-positions (map #(mod (+ 90 %) 360) degree-positions)]
+    (map q/radians translated-degree-positions)))
+
+(defn draw-button [coordinates button-labels]
+  (if (not (empty? coordinates))
+    (let [[x y] (first coordinates)
+          node-x (* radius x)
+          node-y (* radius y)]
+      ; Color and draw node
+      (apply q/fill [194 194 239])
+      (q/ellipse node-x node-y 75 40)
+      ; Add the index label to the node
+      (q/fill 0 0 0)
+      (q/text-align :center :center)
+      (q/text (first button-labels) node-x node-y)
+      (draw-button (rest coordinates) (rest button-labels)))))
+
+
+
 (defn draw-buttons []
-  (print (str "origin=" (:x (default-origin))))
-   (q/ellipse (:x 1) (:y -10) 75 40))
+  (let [coordinates (map #(vector (q/cos %) (q/sin %)) (button-positions 3))]
+    (draw-button coordinates button-labels)))
 
 
-(defn draw-state [{:keys [number-of-nodes put-animation-map get-animation-map mode]}]
+(defn draw-state [{:keys [number-of-nodes put-animation-map get-animation-map mode last-key success?] :or {last-key "", success? ""}}]
   ; Clear the sketch by filling it with light-grey color.
-  (q/background 240)
+  (q/background 255)
   (let [radian-positions (radian-positions number-of-nodes)]
     ; Move origin point to the center of the sketch.
+    (draw-text (str "Mode: " (clojure.string/upper-case (name mode))) 380 420)
+    (draw-text (str "Key: \"" (name last-key) "\"") 380 440)
+    (draw-text (str "Success: " success?) 380 460)
     (q/with-translation [(/ (q/width) 2)
                          (/ (q/height) 2)]
                         (q/text-size 12)
                         (draw-circles radian-positions put-animation-map get-animation-map)
                         (draw-origin)
                         (draw-buttons)
-                        (draw-mode mode)
                         (draw-title))))
 
 (defn simple-hash [key]
@@ -237,24 +268,33 @@
         updated-data-set (conj data-set key)]
     (-> state
         (assoc-in [:put-animation-map matching-node-index] updated-put-animation-list)
-        (assoc-in [:data matching-node-index] updated-data-set))))
+        (assoc-in [:data matching-node-index] updated-data-set)
+        (assoc :last-key key)
+        (assoc :success? true))))
 
 (defn node-get [state key]
   (let [matching-node-index (matching-node-index state key)
-        data-set (-> state :data matching-node-index)]
-    (if (contains? data-set key)
-      (let [possible-get-animation-list (-> state :get-animation-map matching-node-index)
-            get-animation-list (if (nil? possible-get-animation-list) (list) possible-get-animation-list)
-            updated-get-animation-list (conj get-animation-list (key-animation-map key 100.0))]
-        (assoc-in state [:get-animation-map matching-node-index] updated-get-animation-list))
-      state)))
+        data-set (-> state :data matching-node-index)
+        success? (contains? data-set key)]
+    (-> (if success?
+          (let [possible-get-animation-list (-> state :get-animation-map matching-node-index)
+                get-animation-list (if (nil? possible-get-animation-list) (list) possible-get-animation-list)
+                updated-get-animation-list (conj get-animation-list (key-animation-map key 100.0))]
+            (assoc-in state [:get-animation-map matching-node-index] updated-get-animation-list))
+          state)
+        (assoc :last-key key)
+        (assoc :success? success?))))
 
 (defn node-del [state key]
   (let [matching-node-index (matching-node-index state key)
         possible-data-set (-> state :data matching-node-index)
         data-set (if (nil? possible-data-set) #{} possible-data-set)
+        success? (contains? data-set key)
         updated-data-set (disj data-set key)]
-    (assoc-in state [:data matching-node-index] updated-data-set)))
+    (-> state
+        (assoc-in [:data matching-node-index] updated-data-set)
+        (assoc :last-key key)
+        (assoc :success? success?))))
 
 (defn rebalance-data [all-data-set new-number-of-nodes]
   (reduce #(let [matching-node-index (-> %2 (simple-hash) (mod new-number-of-nodes) (inc) (keywordize))
@@ -285,10 +325,19 @@
       (and valid-key (= (:mode state) :del)) (node-del state key)
       :else state)))
 
+(defn is-between [value left right]
+  (and (> value left) (< value right)))
+
 (defn mouse-click [state event]
-  (println (str "state=" state))
-  (println (str "event=" event))
-  state)
+  (let [x (:x event)
+        y (:y event)
+        random-letter (get alphabet-range (rand-int 6))
+        random-keyword (keyword random-letter)]
+    (cond
+      (and (is-between x 105 180) (is-between y 120 160)) (node-get (assoc state :mode :get) random-keyword)
+      (and (is-between x 60 135) (is-between y 230 270)) (node-put (assoc state :mode :put) random-keyword)
+      (and (is-between x 105 180) (is-between y 335 375)) (node-del (assoc state :mode :del) random-keyword)
+      :else state)))
 
 (q/defsketch distributed-hash-tool
   :host "distributed-hash-tool"
