@@ -1,5 +1,9 @@
 goog.addDependency("base.js", ['goog'], []);
 goog.addDependency("../cljs/core.js", ['cljs.core'], ['goog.string', 'goog.object', 'goog.math.Integer', 'goog.string.StringBuffer', 'goog.array', 'goog.math.Long']);
+goog.addDependency("../distributed_hash_tool/constant.js", ['distributed_hash_tool.constant'], ['cljs.core']);
+goog.addDependency("../distributed_hash_tool/operation.js", ['distributed_hash_tool.operation'], ['cljs.core', 'distributed_hash_tool.constant']);
+goog.addDependency("../distributed_hash_tool/mouse.js", ['distributed_hash_tool.mouse'], ['distributed_hash_tool.operation', 'cljs.core', 'distributed_hash_tool.constant']);
+goog.addDependency("../distributed_hash_tool/keyboard.js", ['distributed_hash_tool.keyboard'], ['distributed_hash_tool.operation', 'cljs.core', 'distributed_hash_tool.constant']);
 goog.addDependency("../processing.js", ['org.processingjs.Processing'], []);
 goog.addDependency("../quil/middlewares/deprecated_options.js", ['quil.middlewares.deprecated_options'], ['cljs.core']);
 goog.addDependency("../clojure/string.js", ['clojure.string'], ['goog.string', 'cljs.core', 'goog.string.StringBuffer']);
@@ -10,4 +14,7 @@ goog.addDependency("../quil/middlewares/navigation_3d.js", ['quil.middlewares.na
 goog.addDependency("../quil/middlewares/navigation_2d.js", ['quil.middlewares.navigation_2d'], ['cljs.core', 'quil.core']);
 goog.addDependency("../quil/middlewares/fun_mode.js", ['quil.middlewares.fun_mode'], ['cljs.core', 'quil.core']);
 goog.addDependency("../quil/middleware.js", ['quil.middleware'], ['cljs.core', 'quil.middlewares.navigation_3d', 'quil.middlewares.navigation_2d', 'quil.middlewares.fun_mode']);
-goog.addDependency("../distributed_hash_tool/core.js", ['distributed_hash_tool.core'], ['cljs.core', 'quil.core', 'quil.middleware']);
+goog.addDependency("../distributed_hash_tool/button.js", ['distributed_hash_tool.button'], ['cljs.core', 'distributed_hash_tool.constant', 'quil.core']);
+goog.addDependency("../distributed_hash_tool/origin.js", ['distributed_hash_tool.origin'], ['cljs.core', 'distributed_hash_tool.constant', 'quil.core']);
+goog.addDependency("../distributed_hash_tool/point.js", ['distributed_hash_tool.point'], ['cljs.core', 'distributed_hash_tool.constant', 'quil.core', 'distributed_hash_tool.origin']);
+goog.addDependency("../distributed_hash_tool/core.js", ['distributed_hash_tool.core'], ['distributed_hash_tool.mouse', 'distributed_hash_tool.keyboard', 'cljs.core', 'distributed_hash_tool.constant', 'quil.core', 'quil.middleware', 'distributed_hash_tool.button', 'distributed_hash_tool.point', 'distributed_hash_tool.origin']);
