@@ -7,3 +7,5 @@ lein cljsbuild once
 ```
 
 Then open index.html (found in the project's root directory) and the tool should be there.
+
+The latest version of the tool can be found [here](https://lrwolf.github.io/distributed-hash-tool/).
